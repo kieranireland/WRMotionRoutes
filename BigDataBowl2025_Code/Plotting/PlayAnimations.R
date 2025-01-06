@@ -284,7 +284,7 @@ motion_path2 <- full_route_path2 |>
     ease_aes("linear") +
     guides(fill = guide_legend(override.aes = list(size = 5.4))) +
     labs(title = "Flat Route After Short Motion",
-         subtitle = "Q1 - 2nd & 2: Buffalo Bills @ Miami Dolphins, 2022 NFL Week 8",
+         subtitle = "Q1 - 2nd & 2: MIA vs BUF, Week 3 2022 NFL Season",
          fill = NULL) +
     theme_minimal() +
     theme(text = element_text(family = 'sans', color = 'black'),
