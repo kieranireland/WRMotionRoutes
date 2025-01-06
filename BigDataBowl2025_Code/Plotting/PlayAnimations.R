@@ -2,23 +2,11 @@ library(tidyverse)
 library(gganimate)
 
 
-# tracking <- read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_1.csv") |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_2.csv")) |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_3.csv")) |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_4.csv")) |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_5.csv")) |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_6.csv")) |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_7.csv")) |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_8.csv")) |>
-#   bind_rows(read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_9.csv"))
-
-plays <- read_csv("nfl-big-data-bowl-2025/plays.csv")
-player_plays <- read_csv("nfl-big-data-bowl-2025/player_play.csv")
-games <- read_csv("nfl-big-data-bowl-2025/games.csv")
-results_df <- read_csv("nfl-big-data-bowl-2025/test_results_mim.csv")
+tracking3 <- read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_3.csv")
+tracking8 <- read_csv("/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2025/BigDataBowl2025/nfl-big-data-bowl-2025/tracking_week_8.csv")
 
 ## Short motion, cross route
-ex_df1 <- tracking |>
+ex_df1 <- tracking8 |>
   filter(gameId == 2022103008, playId == 2809) |>
   mutate(start_frame = frameId[which(event == "man_in_motion")][1],
          end_frame = frameId[which(event == "out_of_bounds")][1]) |>
@@ -40,14 +28,7 @@ football_df1 <- ex_df1 |>
 full_route_path1 <- ex_df1 |>
   filter(nflId == 52457) |>
   mutate(motion_frame = frameId[which(event == "man_in_motion")][1],
-         snap_frame = frameId[which(event == "ball_snap")][1])
-route_path1 <- full_route_path1 |>
-  filter(frameId >= snap_frame) |>
-  mutate(motion_color = "red",
-         motion_linetype = "solid",
-         motion_linewidth = 1)
-motion_path1 <- full_route_path1 |>
-  filter(frameId >= motion_frame & frameId <= snap_frame) |> 
+         snap_frame = frameId[which(event == "ball_snap")][1]) |>
   mutate(motion_color = "red",
          motion_linetype = "solid",
          motion_linewidth = 1)
@@ -124,9 +105,7 @@ motion_path1 <- full_route_path1 |>
                aes(y, x, fill = pt_fill, size = pt_size, group = nflId), shape = 21) +
     geom_point(data = football_df1, 
                aes(y, x, size = pt_size, group = nflId), fill = "#654321", shape = 21) +
-    geom_line(data = motion_path1, 
-              aes(y, x, color = motion_color, linetype = motion_linetype, linewidth = motion_linewidth)) +
-    geom_line(data = route_path1, 
+    geom_line(data = full_route_path1, 
               aes(y, x, color = motion_color, linetype = motion_linetype, linewidth = motion_linewidth)) +
     scale_fill_manual(values = c("#FFB612", "#004C54", "red")) +
     scale_size_identity() +
@@ -163,7 +142,7 @@ anim_save(filename = "/Users/kieranireland/Desktop/Sports Analytics/BigDataBowl2
 
 
 ## Short motion, flat route -- Kumerow Play
-kumerow_df <- tracking |>
+kumerow_df <- tracking3 |>
   filter(gameId == 2022092503, playId == 890) |>
   mutate(start_frame = frameId[which(event == "man_in_motion")][1],
          end_frame = frameId[which(event %in% c("out_of_bounds"))][1]) |>
@@ -185,18 +164,10 @@ football_df2 <- kumerow_df |>
 full_route_path2 <- kumerow_df |>
   filter(nflId == 42818) |>
   mutate(motion_frame = frameId[which(event == "man_in_motion")][1],
-         snap_frame = frameId[which(event == "ball_snap")][1])
-route_path2 <- full_route_path2 |>
-  filter(frameId >= snap_frame) |>
+         snap_frame = frameId[which(event == "ball_snap")][1]) |>
   mutate(motion_color = "red",
          motion_linetype = "solid",
          motion_linewidth = 1)
-motion_path2 <- full_route_path2 |>
-  filter(frameId >= motion_frame & frameId <= snap_frame) |> 
-  mutate(motion_color = "red",
-         motion_linetype = "solid",
-         motion_linewidth = 1)
-
 
 
 (kumerow_route <- ggplot() +
@@ -269,9 +240,7 @@ motion_path2 <- full_route_path2 |>
                aes(y, x, fill = pt_fill, size = pt_size, group = nflId), shape = 21) +
     geom_point(data = football_df2, 
                aes(y, x, size = pt_size, group = nflId), fill = "#654321", shape = 21) +
-    geom_line(data = motion_path2, 
-              aes(y, x, color = motion_color, linetype = motion_linetype, linewidth = motion_linewidth)) +
-    geom_line(data = route_path2, 
+    geom_line(data = full_route_path2, 
               aes(y, x, color = motion_color, linetype = motion_linetype, linewidth = motion_linewidth)) +
     scale_fill_manual(values = c("#00338D", "#008E97", "red")) +
     scale_size_identity() +
